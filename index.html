@@ -52,11 +52,11 @@
         nav ul li a { color: var(--text-white); text-decoration: none; font-weight: 500; transition: 0.3s; cursor: pointer; }
         nav ul li a:hover { color: var(--secondary-color); }
 
-        /* Sections General */
+        /* Sections */
         .section { padding: 100px 10%; display: none; min-height: 100vh; }
         .active-section { display: block; animation: fadeIn 0.5s ease; }
 
-        /* Hero Section */
+        /* Hero */
         header {
             height: 100vh;
             display: flex;
@@ -69,7 +69,7 @@
         header h1 { font-size: clamp(3rem, 10vw, 5rem); margin-bottom: 10px; }
         header p { font-size: 1.5rem; color: var(--secondary-color); font-weight: 300; }
 
-        /* Cards & Grid */
+        /* Pricing Cards */
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; margin-top: 50px; }
         .card {
             background: var(--card-bg);
@@ -85,52 +85,30 @@
         .info-short { color: var(--accent); font-weight: bold; margin-bottom: 10px; }
         .info-long { color: var(--text-gray); font-size: 0.9rem; line-height: 1.6; flex-grow: 1; margin-bottom: 20px; }
 
-        /* Form Styling */
-        .order-container { max-width: 600px; margin: 0 auto; background: var(--card-bg); padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        /* Form */
+        .order-container { max-width: 600px; margin: 0 auto; background: var(--card-bg); padding: 40px; border-radius: 20px; }
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; margin-bottom: 8px; color: var(--text-gray); }
         input, select, textarea {
-            width: 100%;
-            padding: 12px;
-            border-radius: 10px;
-            border: 1px solid #334155;
-            background: #0f172a;
-            color: white;
-            font-size: 1rem;
-            outline: none;
+            width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #334155;
+            background: #0f172a; color: white; outline: none;
         }
-        input:focus { border-color: var(--primary-color); }
 
-        /* AI Bot */
-        .chat-container { max-width: 600px; margin: 0 auto; background: var(--card-bg); border-radius: 20px; height: 450px; display: flex; flex-direction: column; }
+        /* Buttons */
+        .btn {
+            display: inline-block; padding: 12px 25px; background: var(--primary-color);
+            color: white; text-decoration: none; border-radius: 10px; cursor: pointer; border: none; font-weight: bold;
+        }
+        .btn:hover { background: var(--secondary-color); }
+
+        /* Chat Bot */
+        .chat-container { max-width: 600px; margin: 0 auto; background: var(--card-bg); border-radius: 20px; height: 450px; display: flex; flex-direction: column; overflow: hidden; }
         .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
         .message { max-width: 80%; padding: 10px 15px; border-radius: 15px; font-size: 0.9rem; }
         .bot-msg { background: #334155; align-self: flex-start; }
         .user-msg { background: var(--primary-color); align-self: flex-end; }
 
-        /* Buttons */
-        .btn {
-            display: inline-block;
-            padding: 12px 25px;
-            background: var(--primary-color);
-            color: white;
-            text-decoration: none;
-            border-radius: 10px;
-            text-align: center;
-            cursor: pointer;
-            border: none;
-            transition: 0.3s;
-            font-weight: bold;
-        }
-        .btn:hover { background: var(--secondary-color); transform: translateY(-2px); }
-        .btn-order { width: 100%; margin-top: 10px; }
-
-        /* Success Message */
-        #success-msg { display: none; text-align: center; padding: 20px; background: var(--accent); color: white; border-radius: 10px; margin-top: 20px; }
-
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        @media (max-width: 768px) { nav ul { display: none; } }
     </style>
 </head>
 <body>
@@ -151,41 +129,41 @@
         <header>
             <h1>מגנוס קרלסן</h1>
             <p>מפתח אנדרואיד</p>
-            <button onclick="showSection('prices')" class="btn" style="margin-top: 30px;">התחל עכשיו</button>
+            <button onclick="showSection('prices')" class="btn" style="margin-top: 30px;">לצפייה בשירותים</button>
         </header>
     </section>
 
     <!-- Prices Section -->
     <section id="prices" class="section">
-        <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 20px;">מחירון שירותים</h2>
+        <h2 style="text-align: center; margin-bottom: 40px;">שירותי פיתוח ותיקון</h2>
         <div class="grid">
             <div class="card">
                 <span class="price">₪60</span>
                 <h3>רוט (Root)</h3>
-                <p class="info-short">הרשאות מנהל-על מלאות</p>
-                <p class="info-long">שינוי קבצי מערכת, הסרת אפליקציות מובנות וביצוע שינויים עמוקים שאנדרואיד חוסם כברירת מחדל.</p>
-                <button class="btn" onclick="openOrder('רוט (60 שח)')">הזמן שירות</button>
+                <p class="info-short">הרשאות מלאות</p>
+                <p class="info-long">שליטה מלאה במערכת ההפעלה, הסרת אפליקציות מובנות והתאמה אישית עמוקה.</p>
+                <button class="btn" onclick="openOrder('רוט')">הזמן עכשיו</button>
             </div>
             <div class="card">
                 <span class="price">₪50</span>
                 <h3>צריבת גרסה</h3>
-                <p class="info-short">תיקון בריק ועדכונים</p>
-                <p class="info-long">התקנה מחדש של מערכת ההפעלה. פתרון ללופ-בוט (תקיעה על לוגו), שדרוג או שנמוך גרסה ידני.</p>
-                <button class="btn" onclick="openOrder('צריבת גרסה (50 שח)')">הזמן שירות</button>
+                <p class="info-short">תיקון תוכנה</p>
+                <p class="info-long">פתרון לבעיות תוכנה, מכשירים שנתקעים על לוגו ושנמוך גרסאות אנדרואיד.</p>
+                <button class="btn" onclick="openOrder('צריבת גרסה')">הזמן עכשיו</button>
             </div>
             <div class="card">
                 <span class="price">₪50</span>
                 <h3>הכשרת נגנים</h3>
-                <p class="info-short">חסימה הרמטית וסינון</p>
-                <p class="info-long">הפיכת המכשיר לכשר: Waze בלבד, ללא דפדפן וללא חנות אפליקציות. חסימה מלאה של האינטרנט.</p>
-                <button class="btn" onclick="openOrder('הכשרת נגנים (50 שח)')">הזמן שירות</button>
+                <p class="info-short">חסימה הרמטית</p>
+                <p class="info-long">הסרת דפדפן וחנות, השארת Waze בלבד והפיכת המכשיר לכשר ומאושר.</p>
+                <button class="btn" onclick="openOrder('הכשרת נגנים')">הזמן עכשיו</button>
             </div>
             <div class="card">
                 <span class="price">₪10</span>
-                <h3>תרגום אפליקציות</h3>
-                <p class="info-short">גיור לעברית מלאה</p>
-                <p class="info-long">עריכת קבצי APK, תרגום מחרוזות טקסט לעברית והתאמת כיוון הממשק (RTL) בצורה מקצועית.</p>
-                <button class="btn" onclick="openOrder('תרגום אפליקציה (10 שח)')">הזמן שירות</button>
+                <h3>תרגום אפליקציה</h3>
+                <p class="info-short">גיור לעברית</p>
+                <p class="info-long">תרגום מלא של ממשק האפליקציה מאנגלית לעברית כולל התאמת RTL.</p>
+                <button class="btn" onclick="openOrder('תרגום אפליקציה')">הזמן עכשיו</button>
             </div>
         </div>
     </section>
@@ -193,20 +171,26 @@
     <!-- Order Section -->
     <section id="order-page" class="section">
         <div class="order-container">
-            <h2 style="margin-bottom: 10px;">טופס הזמנה</h2>
-            <p style="color: var(--text-gray); margin-bottom: 20px;">מלא את הפרטים ונחזור אליך בהקדם לביצוע העבודה.</p>
+            <h2 id="order-title">ביצוע הזמנה</h2>
+            <p style="margin-bottom: 25px; color: var(--text-gray);">מלא פרטים ונחזור אליך בהקדם.</p>
             
-            <form id="orderForm" action="https://formspree.io/f/ybuda42@gmail.com" method="POST">
+            <!-- FormSubmit Service -->
+            <form action="https://formsubmit.co/ybuda42@gmail.com" method="POST">
+                <!-- הגדרות נוספות לטופס -->
+                <input type="hidden" name="_next" value="https://ybuda42.github.io/thanks.html"> <!-- אפשר לשנות לדף תודה משלך -->
+                <input type="hidden" name="_subject" value="הזמנה חדשה מהאתר!">
+                <input type="hidden" name="_captcha" value="false">
+
                 <div class="form-group">
                     <label>שם מלא</label>
-                    <input type="text" name="name" required placeholder="ישראל ישראלי">
+                    <input type="text" name="name" required placeholder="השם שלך">
                 </div>
                 <div class="form-group">
-                    <label>אימייל לחזרה</label>
-                    <input type="email" name="email" required placeholder="your@email.com">
+                    <label>מספר טלפון / מייל לחזרה</label>
+                    <input type="text" name="contact_info" required placeholder="איך ליצור איתך קשר?">
                 </div>
                 <div class="form-group">
-                    <label>שירות מבוקש</label>
+                    <label>השירות הנבחר</label>
                     <select name="service" id="serviceSelect">
                         <option value="רוט">רוט - 60 ש"ח</option>
                         <option value="צריבת גרסה">צריבת גרסה - 50 ש"ח</option>
@@ -215,24 +199,24 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>הערות נוספות (דגם מכשיר וכו')</label>
-                    <textarea name="message" rows="4" placeholder="ציין כאן את דגם המכשיר ופרטים נוספים..."></textarea>
+                    <label>פרטים נוספים (דגם מכשיר וכו')</label>
+                    <textarea name="details" rows="3"></textarea>
                 </div>
-                <button type="submit" class="btn btn-order">אשר הזמנה ושלח</button>
+                <button type="submit" class="btn" style="width: 100%;">אשר הזמנה ושלח</button>
             </form>
-            <div id="success-msg">תודה! ההזמנה התקבלה, נחזור אליך בהקדם המהיר ביותר.</div>
+            <p style="margin-top: 15px; font-size: 0.8rem; color: var(--accent); text-align: center;">לאחר הלחיצה, נחזור אליך בהקדם המהיר ביותר!</p>
         </div>
     </section>
 
     <!-- AI Bot Section -->
     <section id="ai-guide" class="section">
-        <h2 style="text-align: center; margin-bottom: 30px;">העוזר של מגנוס</h2>
+        <h2 style="text-align: center; margin-bottom: 30px;">עוזר אישי</h2>
         <div class="chat-container">
             <div class="chat-messages" id="chatMessages">
-                <div class="message bot-msg">שלום! אני בוט השירות של מגנוס. איך אוכל לעזור? (שאל על מחירים או יצירת קשר)</div>
+                <div class="message bot-msg">שלום! אני העוזר של מגנוס. מה תרצה לדעת על השירותים שלנו?</div>
             </div>
-            <div class="chat-input-area" style="padding: 15px; display: flex; gap: 10px; border-top: 1px solid #334155;">
-                <input type="text" id="userInput" placeholder="הקלד הודעה..." onkeypress="if(event.key==='Enter') sendMessage()">
+            <div style="padding: 15px; background: #2d3748; display: flex; gap: 10px;">
+                <input type="text" id="userInput" placeholder="שאל אותי משהו..." onkeypress="if(event.key==='Enter') sendMessage()">
                 <button class="btn" onclick="sendMessage()">שלח</button>
             </div>
         </div>
@@ -241,54 +225,24 @@
     <!-- Contact Section -->
     <section id="contact" class="section">
         <div class="order-container" style="text-align: center;">
-            <h2>צור קשר ישיר</h2>
-            <p style="margin: 20px 0;">מייל: <span style="color: var(--secondary-color);">ybuda42@gmail.com</span></p>
+            <h2>צור קשר</h2>
+            <p style="margin: 20px 0;">מייל: ybuda42@gmail.com</p>
             <a href="https://mitmachim.top/user/%D7%9E%D7%92%D7%A0%D7%95%D7%A1-%D7%A7%D7%A8%D7%9C%D7%A1%D7%9F" target="_blank" class="btn">פרופיל מתמחים Top</a>
         </div>
     </section>
 
     <script>
-        // Navigation Logic
         function showSection(id) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active-section'));
             document.getElementById(id).classList.add('active-section');
             window.scrollTo(0,0);
         }
 
-        // Open Order with pre-selected service
-        function openOrder(serviceName) {
+        function openOrder(service) {
             showSection('order-page');
-            const select = document.getElementById('serviceSelect');
-            for (let option of select.options) {
-                if (serviceName.includes(option.value)) {
-                    select.value = option.value;
-                    break;
-                }
-            }
+            document.getElementById('serviceSelect').value = service;
         }
 
-        // Form Submission Logic
-        const form = document.getElementById('orderForm');
-        form.onsubmit = async (e) => {
-            e.preventDefault();
-            const formData = new FormData(form);
-            
-            // Sending to Formspree
-            const response = await fetch(form.action, {
-                method: 'POST',
-                body: formData,
-                headers: { 'Accept': 'application/json' }
-            });
-
-            if (response.ok) {
-                form.style.display = 'none';
-                document.getElementById('success-msg').style.display = 'block';
-            } else {
-                alert('הייתה שגיאה בשליחה. אנא נסה שוב או שלח מייל ישירות.');
-            }
-        };
-
-        // Simple AI Bot Logic
         function sendMessage() {
             const input = document.getElementById('userInput');
             const chat = document.getElementById('chatMessages');
@@ -299,17 +253,17 @@
             userDiv.innerText = input.value;
             chat.appendChild(userDiv);
 
-            const msg = input.value.toLowerCase();
+            const text = input.value.toLowerCase();
             input.value = '';
 
             setTimeout(() => {
                 const botDiv = document.createElement('div');
                 botDiv.className = 'message bot-msg';
-                let reply = "לא הבנתי, תוכל לשאול על מחירים, רוט או איך להזמין.";
+                let reply = "אני כאן כדי לעזור! תוכל לשאול על מחירים, רוט, צריבה או איך ליצור קשר.";
                 
-                if (msg.includes('מחיר') || msg.includes('כמה')) reply = "מחירי השירותים נעים בין 10 ל-60 שח. בדוק את דף המחירים!";
-                if (msg.includes('קשר') || msg.includes('מייל')) reply = "ניתן ליצור קשר במייל: ybuda42@gmail.com";
-                if (msg.includes('הזמנה') || msg.includes('להזמין')) reply = "לחץ על 'הזמן שירות' בדף המחירים כדי להתחיל.";
+                if (text.includes('מחיר')) reply = "המחירים: רוט (60), צריבה (50), הכשרה (50), תרגום (10).";
+                if (text.includes('קשר')) reply = "מייל: ybuda42@gmail.com. נשמח לעמוד לשירותך!";
+                if (text.includes('להזמין') || text.includes('הזמנה')) reply = "פשוט לחץ על 'הזמן עכשיו' בדף המחירים ומלא את הפרטים.";
                 
                 botDiv.innerText = reply;
                 chat.appendChild(botDiv);
