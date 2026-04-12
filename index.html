@@ -564,7 +564,7 @@ document.querySelectorAll('[data-svc]').forEach(btn=>btn.addEventListener('click
 /* ── CHAT ── */
 function getTime(){const d=new Date();return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0')}
 document.getElementById('initTime').textContent=getTime();
-const BOT={'מחיר':'💰 המחירים שלנו:\n• רוט – 60₪\n• צריבת גרסה – 50₪\n• הכשרת נגנים – 50₪\n• תרגום אפליקציה – 10₪','קשר':'📞 צרו קשר:\n• 130105630610a@gmail.com\n• מתמחים טופ: https://mitmachim.top/user/%D7%9E%D7%92%D7%A0%D7%95%D7%A1-%D7%A7%D7%A8%D7%9C%D7%A1%D7%9F\n• טלפון: 055-6720379','הזמנה':'📝 גלול למטה לטופס ההזמנה, מלא פרטים ואחזור תוך 24 שעות! 🚀','שירותים':'🛠️ השירותים:\n• 🔓 רוט • 🔥 צריבת גרסה\n• 🛡️ הכשרת נגנים • 🌐 תרגום אפליקציה'};function addMsg(text,who){
+const BOT={'מחיר':'💰 המחירים שלנו:\n• רוט – 60₪\n• צריבת גרסה – 50₪\n• הכשרת נגנים – 50₪\n• תרגום אפליקציה – 10₪','קשר':'📞 צרו קשר:\n• 130105630610a@gmail.com\n• מתמחים טופ: https://mitmachim.top/user/מגנוס קרלסן• טלפון: 055-6720379','הזמנה':'📝 גלול למטה לטופס ההזמנה, מלא פרטים ואחזור תוך 24 שעות! 🚀','שירותים':'🛠️ השירותים:\n• 🔓 רוט • 🔥 צריבת גרסה\n• 🛡️ הכשרת נגנים • 🌐 תרגום אפליקציה'};function addMsg(text,who){
   const m=document.getElementById('chatMessages'),d=document.createElement('div');
   d.className=`msg ${who}`;d.innerHTML=`<div class="bubble">${text.replace(/\n/g,'<br/>')}</div><div class="msg-time">${getTime()}</div>`;
   m.appendChild(d);m.scrollTop=99999;
