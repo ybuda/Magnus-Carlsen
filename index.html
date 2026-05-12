@@ -561,24 +561,60 @@ document.querySelectorAll('[data-svc]').forEach(btn=>btn.addEventListener('click
   const s=document.getElementById('serviceSelect');if(s)s.selectedIndex=+btn.dataset.svc;
 }));
 
-/* ── CHAT ── */
+/* ── CHAT (Gemini AI) ── */
+const GEMINI_KEY = 'AIzaSyDFwHxRCRTSD8E_IQDEPqIvriJfdw1wS2A';
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${GEMINI_KEY}`;
+const SYSTEM_CTX = `אתה עוזר AI של מגנוס קרלסן, מפתח אנדרואיד מקצועי מישראל. ענה תמיד בעברית בלבד, בצורה קצרה, ידידותית ומקצועית.
+מידע על העסק:
+• שירותים ומחירים: רוט – 60₪ | צריבת גרסה – 50₪ | הכשרת נגנים – 50₪ | תרגום אפליקציה – 10₪
+• יצירת קשר: אימייל 130105630610a@gmail.com | טלפון 055-6720379 | מתמחים טופ: https://mitmachim.top/user/מגנוס-קרלסן
+• הזמנה: יש טופס הזמנה בדף, ניתן לגלול למטה ולמלא פרטים
+• זמן תגובה: עד 24 שעות
+ענה רק על שאלות הקשורות לעסק. אם שואלים משהו לא קשור – הסבר בנימוס שאתה עוזר AI של YTech בלבד.`;
+
 function getTime(){const d=new Date();return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0')}
 document.getElementById('initTime').textContent=getTime();
-const BOT={'מחיר':'💰 המחירים שלנו:\n• רוט – 60₪\n• צריבת גרסה – 50₪\n• הכשרת נגנים – 50₪\n• תרגום אפליקציה – 10₪','קשר':'📞 צרו קשר:\n• 130105630610a@gmail.com\n• מתמחים טופ: https://mitmachim.top/user/מגנוס קרלסן• טלפון: 055-6720379','הזמנה':'📝 גלול למטה לטופס ההזמנה, מלא פרטים ואחזור תוך 24 שעות! 🚀','שירותים':'🛠️ השירותים:\n• 🔓 רוט • 🔥 צריבת גרסה\n• 🛡️ הכשרת נגנים • 🌐 תרגום אפליקציה'};function addMsg(text,who){
+
+function addMsg(text,who){
   const m=document.getElementById('chatMessages'),d=document.createElement('div');
-  d.className=`msg ${who}`;d.innerHTML=`<div class="bubble">${text.replace(/\n/g,'<br/>')}</div><div class="msg-time">${getTime()}</div>`;
+  d.className=`msg ${who}`;
+  d.innerHTML=`<div class="bubble">${text.replace(/\n/g,'<br/>')}</div><div class="msg-time">${getTime()}</div>`;
   m.appendChild(d);m.scrollTop=99999;
 }
-function botReply(inp){
-  const ti=document.getElementById('typingIndicator');ti.classList.add('active');
-  setTimeout(()=>{
+
+async function botReply(inp){
+  const ti=document.getElementById('typingIndicator');
+  ti.classList.add('active');
+  document.getElementById('chatMessages').scrollTop=99999;
+  try{
+    const res=await fetch(GEMINI_URL,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        contents:[{
+          parts:[{text: SYSTEM_CTX + '\n\nשאלת המשתמש: ' + inp}]
+        }],
+        generationConfig:{maxOutputTokens:300,temperature:0.7}
+      })
+    });
+    const data=await res.json();
+    const reply=data?.candidates?.[0]?.content?.parts?.[0]?.text
+      || 'מצטער, לא הצלחתי לענות כרגע. נסה שוב! 😊';
     ti.classList.remove('active');
-    let r='אני מבין 😊 נסה לשאול על: "מחיר", "קשר", "הזמנה" או "שירותים".';
-    for(const[k,v] of Object.entries(BOT)){if(inp.includes(k)){r=v;break}}
-    addMsg(r,'bot');
-  },700+Math.random()*400);
+    addMsg(reply,'bot');
+  }catch(err){
+    ti.classList.remove('active');
+    addMsg('שגיאה בחיבור לשרת. נסה שוב מאוחר יותר 🙏','bot');
+  }
 }
-function sendMessage(){const i=document.getElementById('chatInput'),v=i.value.trim();if(!v)return;addMsg(v,'user');i.value='';botReply(v)}
+
+function sendMessage(){
+  const i=document.getElementById('chatInput'),v=i.value.trim();
+  if(!v)return;
+  addMsg(v,'user');
+  i.value='';
+  botReply(v);
+}
 function sendHint(t){addMsg(t,'user');botReply(t)}
 document.getElementById('chatInput').addEventListener('keydown',e=>{if(e.key==='Enter')sendMessage()});
 
