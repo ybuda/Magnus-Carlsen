@@ -1,2 +1,2 @@
 לאתר שלי:
-https://ybuda.github.io/Magnus-Carlsen/
+https://ybuda.github.io/YTech/
