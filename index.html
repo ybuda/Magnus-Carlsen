@@ -35,10 +35,6 @@ nav{position:fixed;top:0;right:0;left:0;z-index:900;padding:0 2rem;height:64px;d
 .nav-links a::after{content:'';position:absolute;bottom:-4px;right:0;width:0;height:2px;background:var(--grad);transition:width .3s}
 .nav-links a:hover{color:var(--cyan)}.nav-links a:hover::after{width:100%}
 .nav-right{display:flex;align-items:center;gap:.6rem}
-.search-btn{background:none;border:none;cursor:pointer;color:var(--muted);font-size:1.52rem;padding:.3rem;transition:color .2s;display:flex;align-items:center}
-.search-btn:hover{color:var(--cyan)}
-.search-field{width:0;opacity:0;border:none;background:rgba(0,212,255,.08);border-radius:8px;padding:0;color:var(--text);font-family:'Heebo',sans-serif;font-size:.86rem;transition:width .35s,opacity .35s,padding .35s;direction:ltr;outline:none}
-.search-field.open{width:120px;opacity:1;padding:.33rem .7rem;border:1px solid var(--border)}
 .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none}
 .hamburger span{display:block;width:24px;height:2px;background:var(--cyan);border-radius:2px;transition:.3s}
 
@@ -92,16 +88,10 @@ section{padding:100px 2rem 60px;max-width:1100px;margin:0 auto}
 .card .btn-primary{margin-top:auto;justify-content:center}
 
 /* APPS */
-.apps-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:1.2rem}
-.app-card{background:var(--bg2);border:1px solid var(--border);border-radius:18px;padding:1.4rem;display:flex;flex-direction:column;gap:.65rem;transition:transform .3s,box-shadow .3s,border-color .3s;text-decoration:none;color:inherit;position:relative;overflow:hidden}
-.app-card:hover{transform:translateY(-6px);box-shadow:var(--card-hover);border-color:rgba(0,212,255,.3)}
-.app-emoji{font-size:2rem;line-height:1}
-.app-name{font-size:.98rem;font-weight:700}
 .app-cat{font-size:.7rem;color:var(--cyan);font-weight:600;text-transform:uppercase;letter-spacing:1.5px}
 .app-desc{font-size:.82rem;color:var(--muted);line-height:1.55;flex:1}
 .app-price-tag{font-size:.8rem;font-weight:700;color:#fff;background:var(--grad);padding:.22rem .65rem;border-radius:100px;align-self:flex-start}
 .app-free{font-size:.82rem;font-weight:700;color:var(--green)}
-.apps-empty{text-align:center;color:var(--muted);padding:3rem;font-size:.92rem;border:1px dashed var(--border);border-radius:18px;grid-column:1/-1}
 
 /* FORM */
 .form-card{background:var(--bg2);border:1px solid var(--border);border-radius:22px;padding:2.5rem}
@@ -223,13 +213,11 @@ footer a{color:var(--cyan);text-decoration:none}
   <ul class="nav-links" id="navLinks">
     <li><a href="#hero">ראשי</a></li>
     <li><a href="#pricing">מחירים</a></li>
-    <li><a href="#apps">אפליקציות</a></li>
+    <li><a href="apps.html">אפליקציות</a></li>
     <li><a href="#order">הזמנה</a></li>
     <li><a href="#contact">צור קשר</a></li>
   </ul>
   <div class="nav-right">
-    <button class="search-btn" id="searchToggle" title="חיפוש ">🔍</button>
-    <input class="search-field" id="searchField" type="text" placeholder="חפש..." maxlength="20" autocomplete="off" dir="ltr"/>
     <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
   </div>
 </nav>
@@ -299,19 +287,6 @@ footer a{color:var(--cyan);text-decoration:none}
   </div>
 </section>
 
-<div class="divider"></div>
-
-<!-- APPS -->
-<section id="apps">
-  <div class="reveal">
-    <div class="section-label">📦 תוכנות ואפליקציות</div>
-    <h2 class="section-title">הפרויקטים <span>שלי</span></h2>
-    <p class="section-desc">אוסף האפליקציות והתוכנות שפיתחתי – לחץ כדי להוריד וליהנות.</p>
-  </div>
-  <div class="apps-grid reveal" id="appsGrid">
-    <div class="apps-empty" id="appsEmpty">🚀 אין פרויקטים עדיין – כנס לפאנל הניהול כדי להוסיף!</div>
-  </div>
-</section>
 
 <div class="divider"></div>
 
@@ -638,21 +613,6 @@ const hamburger=document.getElementById('hamburger'),navLinks=document.getElemen
 hamburger.addEventListener('click',()=>navLinks.classList.toggle('open'));
 navLinks.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>navLinks.classList.remove('open')));
 
-/* ── SEARCH SECRET ── */
-const searchToggle=document.getElementById('searchToggle'),searchField=document.getElementById('searchField');
-searchToggle.addEventListener('click',()=>{
-  searchField.classList.toggle('open');
-  if(searchField.classList.contains('open'))setTimeout(()=>searchField.focus(),50);
-  else{searchField.value=''}
-});
-function checkSecret(){
-  if(searchField.value.trim()==='1234'){
-    searchField.value='';searchField.classList.remove('open');
-    openLogin();
-  }
-}
-searchField.addEventListener('keydown',e=>{if(e.key==='Enter')checkSecret()});
-searchField.addEventListener('input',()=>{if(searchField.value==='1234')setTimeout(checkSecret,150)});
 
 /* ── SCROLL REVEAL ── */
 const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target)}})},{threshold:.1});
@@ -701,7 +661,7 @@ function addApp(){
   if(!name||!desc){showToast('❌ שם ותיאור הם שדות חובה',true);return}
   const apps=loadApps();
   apps.push({id:Date.now(),name,cat,emoji,price,desc,link,tags,date:new Date().toLocaleDateString('he-IL')});
-  saveApps(apps);renderPublicApps();renderAdminList();renderAdminStats();
+  saveApps(apps);renderAdminList();renderAdminStats();
   clearAppForm();showToast('✅ הפרויקט נוסף!');
   switchTab('manageApps',document.querySelectorAll('.admin-tab')[2]);
 }
@@ -714,32 +674,11 @@ function clearAppForm(){
 function deleteApp(id){
   if(!confirm('למחוק את הפרויקט?'))return;
   saveApps(loadApps().filter(a=>a.id!==id));
-  renderPublicApps();renderAdminList();renderAdminStats();showToast('🗑️ נמחק!');
+  renderAdminList();renderAdminStats();showToast('🗑️ נמחק!');
 }
 
 function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
 
-function renderPublicApps(){
-  const apps=loadApps();
-  const grid=document.getElementById('appsGrid');
-  grid.querySelectorAll('.app-card').forEach(c=>c.remove());
-  const empty=document.getElementById('appsEmpty');
-  empty.style.display=apps.length?'none':'block';
-  apps.forEach(a=>{
-    const el=document.createElement(a.link?'a':'div');
-    el.className='app-card';
-    if(a.link){el.href=a.link;el.target='_blank';el.rel='noopener noreferrer'}
-    el.innerHTML=`
-      <div class="app-emoji">${a.emoji}</div>
-      <div class="app-cat">${esc(a.cat)}</div>
-      <div class="app-name">${esc(a.name)}</div>
-      <div class="app-desc">${esc(a.desc)}</div>
-      ${a.price?`<div class="app-price-tag">${esc(a.price)}</div>`:`<div class="app-free">✅ חינמי</div>`}
-      ${a.tags?`<div style="font-size:.7rem;color:var(--muted);margin-top:.2rem">${esc(a.tags)}</div>`:''}
-    `;
-    grid.appendChild(el);
-  });
-}
 
 function renderAdminList(){
   const apps=loadApps();
@@ -815,7 +754,6 @@ function switchTab(id,el){
 })();
 
 /* INIT */
-renderPublicApps();
 </script>
 </body>
 </html>
