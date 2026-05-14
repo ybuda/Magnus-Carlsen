@@ -187,6 +187,14 @@ footer a{color:var(--cyan);text-decoration:none}
 .app-list-price{font-size:.8rem;font-weight:700;color:var(--cyan);white-space:nowrap}
 .app-list-actions{display:flex;gap:.45rem;flex-shrink:0}
 
+
+/* SUCCESS BUBBLE */
+.form-success{display:flex;align-items:center;gap:1rem;background:linear-gradient(135deg,rgba(0,123,255,.12),rgba(0,212,255,.12));border:1px solid rgba(0,212,255,.4);border-radius:16px;padding:1.1rem 1.4rem;margin-top:1rem;animation:fadeUp .4s ease}
+.form-success-icon{font-size:2rem;flex-shrink:0}
+.form-success-text strong{display:block;font-size:1rem;font-weight:800;color:var(--cyan);margin-bottom:.2rem}
+.form-success-text span{font-size:.9rem;color:var(--muted)}
+.form-error{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.35);border-radius:16px;padding:1rem 1.4rem;margin-top:1rem;color:var(--red);font-size:.92rem;font-weight:600}
+
 /* TOAST */
 .toast{position:fixed;bottom:1.8rem;left:50%;transform:translateX(-50%) translateY(30px);background:var(--bg2);border:1px solid var(--green);color:var(--green);padding:.65rem 1.4rem;border-radius:100px;font-size:.83rem;font-weight:600;z-index:99999;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;white-space:nowrap}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -298,7 +306,7 @@ footer a{color:var(--cyan);text-decoration:none}
     <p class="section-desc">מלא את הטופס ואחזור אליך בהקדם.</p>
   </div>
   <div class="form-card reveal">
-    <form action="https://formspree.io/f/xnjwkvvq" method="POST">
+    <form id="orderForm">
       <div class="form-row">
         <div class="form-group"><label>שם פרטי</label><input type="text" name="שם_פרטי" placeholder="ישראל" required/></div>
         <div class="form-group"><label>שם משפחה</label><input type="text" name="שם_משפחה" placeholder="ישראלי" required/></div>
@@ -319,8 +327,9 @@ footer a{color:var(--cyan);text-decoration:none}
       </div>
       <div class="form-group"><label>דגם המכשיר</label><input type="text" name="דגם_מכשיר" placeholder="Samsung Galaxy S26"/></div>
       <div class="form-group"><label>פרטים נוספים</label><textarea name="פרטים_נוספים" placeholder="תאר את הבעיה..."></textarea></div>
-      <button type="submit" class="btn-primary" style="width:100%;justify-content:center">📤 שלח הזמנה</button>
+      <button type="button" class="btn-primary" id="submitBtn" style="width:100%;justify-content:center" onclick="submitForm()">📤 שלח הזמנה</button>
       <p class="form-note">✅ הטופס ישלח ישירות למייל. נחזור אליך תוך 24 שעות.</p>
+    <div id="formMsg" style="display:none"></div>
     </form>
   </div>
 </section>
@@ -749,6 +758,58 @@ function switchTab(id,el){
   });
   resetTimer();
 })();
+
+
+/* ── FORM SUBMIT ── */
+async function submitForm(){
+  const form=document.getElementById('orderForm');
+  const btn=document.getElementById('submitBtn');
+  const msg=document.getElementById('formMsg');
+
+  // basic validation
+  const required=form.querySelectorAll('[required]');
+  let valid=true;
+  required.forEach(f=>{if(!f.value.trim()){f.style.borderColor='var(--red)';valid=false;}else{f.style.borderColor=''}});
+  if(!valid){
+    msg.innerHTML='<div class="form-error">❌ אנא מלא את כל השדות הנדרשים</div>';
+    msg.style.display='block';
+    return;
+  }
+
+  btn.textContent='⏳ שולח...';
+  btn.disabled=true;
+
+  try{
+    const data=new FormData(form);
+    const res=await fetch('https://formspree.io/f/xnjwkvvq',{
+      method:'POST',
+      body:data,
+      headers:{Accept:'application/json'}
+    });
+
+    if(res.ok){
+      form.reset();
+      msg.innerHTML=`
+        <div class="form-success">
+          <div class="form-success-icon">✅</div>
+          <div class="form-success-text">
+            <strong>הפנייה נשלחה בהצלחה!</strong>
+            <span>תודה שפנית אלינו – נחזור אליך תוך 24 שעות 🚀</span>
+          </div>
+        </div>`;
+      msg.style.display='block';
+      btn.textContent='✅ נשלח!';
+      setTimeout(()=>{btn.textContent='📤 שלח הזמנה';btn.disabled=false;},4000);
+    } else {
+      throw new Error('שגיאה');
+    }
+  }catch(e){
+    msg.innerHTML='<div class="form-error">❌ שגיאה בשליחה. נסה שוב מאוחר יותר.</div>';
+    msg.style.display='block';
+    btn.textContent='📤 שלח הזמנה';
+    btn.disabled=false;
+  }
+}
 
 /* INIT */
 </script>
