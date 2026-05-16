@@ -33,6 +33,7 @@ nav{position:fixed;top:0;right:0;left:0;z-index:900;padding:0 2rem;height:64px;d
 .nav-links a::after{content:'';position:absolute;bottom:-4px;right:0;width:0;height:2px;background:var(--grad);transition:width .3s}
 .nav-links a:hover,.nav-links a.active{color:var(--cyan)}
 .nav-links a:hover::after,.nav-links a.active::after{width:100%}
+.nav-right{display:flex;align-items:center;min-width:80px;justify-content:flex-end}
 .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none}
 .hamburger span{display:block;width:24px;height:2px;background:var(--cyan);border-radius:2px;transition:.3s}
 
@@ -93,7 +94,7 @@ footer a{color:var(--cyan);text-decoration:none}
 <canvas id="bgCanvas"></canvas>
 
 <nav>
-  <a href="index.html" class="nav-logo">YTech</a>
+  <div class="nav-logo">YTech</div>
   <ul class="nav-links" id="navLinks">
     <li><a href="index.html">ראשי</a></li>
     <li><a href="index.html#pricing">מחירים</a></li>
@@ -101,7 +102,9 @@ footer a{color:var(--cyan);text-decoration:none}
     <li><a href="index.html#order">הזמנה</a></li>
     <li><a href="index.html#contact">צור קשר</a></li>
   </ul>
-  <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+  <div class="nav-right">
+    <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+  </div>
 </nav>
 
 <div class="page">
@@ -132,36 +135,64 @@ footer a{color:var(--cyan);text-decoration:none}
 (function(){
   const C=document.getElementById('bgCanvas'),ctx=C.getContext('2d');
   let W,H,pts=[],mouse={x:-9999,y:-9999};
-  const CONNECT_DIST=160,MOUSE_DIST=180,MOUSE_PULL=0.018,BASE_SPEED=0.4,DOT_COLOR='0,210,220',BG='#07111f';
+  const CONNECT_DIST=160,MOUSE_DIST=200,BASE_SPEED=0.4,DOT_COLOR='0,210,220',BG='#07111f';
+
   function resize(){
     W=C.width=innerWidth;H=C.height=innerHeight;pts=[];
     const n=Math.floor(W*H/9000);
-    for(let i=0;i<n;i++){const x=Math.random()*W,y=Math.random()*H;pts.push({x,y,hx:x,hy:y,vx:(Math.random()-.5)*BASE_SPEED*2,vy:(Math.random()-.5)*BASE_SPEED*2,pulled:false,r:Math.random()*1.8+.8});}
+    for(let i=0;i<n;i++){
+      const x=Math.random()*W,y=Math.random()*H;
+      pts.push({x,y,vx:(Math.random()-.5)*BASE_SPEED*2,vy:(Math.random()-.5)*BASE_SPEED*2,r:Math.random()*1.8+.8});
+    }
   }
-  resize();window.addEventListener('resize',resize);
+  resize();
+  window.addEventListener('resize',resize);
   window.addEventListener('mousemove',e=>{mouse.x=e.clientX;mouse.y=e.clientY});
   window.addEventListener('mouseleave',()=>{mouse.x=-9999;mouse.y=-9999});
+
   function draw(){
-    ctx.fillStyle=BG;ctx.fillRect(0,0,W,H);
+    ctx.fillStyle=BG;
+    ctx.fillRect(0,0,W,H);
+
+    // cursor glow
+    if(mouse.x>-100){
+      const cg=ctx.createRadialGradient(mouse.x,mouse.y,0,mouse.x,mouse.y,130);
+      cg.addColorStop(0,`rgba(${DOT_COLOR},0.07)`);
+      cg.addColorStop(1,`rgba(${DOT_COLOR},0)`);
+      ctx.beginPath();ctx.arc(mouse.x,mouse.y,130,0,Math.PI*2);
+      ctx.fillStyle=cg;ctx.fill();
+    }
+
+    // dot-to-dot connections
     for(let i=0;i<pts.length;i++){
       for(let j=i+1;j<pts.length;j++){
-        const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);
-        if(d<CONNECT_DIST){ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.strokeStyle=`rgba(${DOT_COLOR},${(1-d/CONNECT_DIST)*0.32})`;ctx.lineWidth=0.8;ctx.stroke();}
+        const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y;
+        const d=Math.sqrt(dx*dx+dy*dy);
+        if(d<CONNECT_DIST){
+          ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);
+          ctx.strokeStyle=`rgba(${DOT_COLOR},${(1-d/CONNECT_DIST)*0.32})`;
+          ctx.lineWidth=0.8;ctx.stroke();
+        }
       }
-      const mdx=pts[i].x-mouse.x,mdy=pts[i].y-mouse.y,md=Math.sqrt(mdx*mdx+mdy*mdy);
-      if(md<MOUSE_DIST){ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(mouse.x,mouse.y);ctx.strokeStyle=`rgba(${DOT_COLOR},${(1-md/MOUSE_DIST)*0.55})`;ctx.lineWidth=0.9;ctx.stroke();}
+      // cursor acts as a virtual dot – draw connecting lines to nearby dots
+      const cdx=pts[i].x-mouse.x,cdy=pts[i].y-mouse.y;
+      const cd=Math.sqrt(cdx*cdx+cdy*cdy);
+      if(cd<MOUSE_DIST){
+        ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(mouse.x,mouse.y);
+        ctx.strokeStyle=`rgba(${DOT_COLOR},${(1-cd/MOUSE_DIST)*0.45})`;
+        ctx.lineWidth=0.9;ctx.stroke();
+      }
     }
+
+    // update & draw dots – no mouse attraction, pure free movement
     for(const p of pts){
-      const mdx=mouse.x-p.x,mdy=mouse.y-p.y,md=Math.sqrt(mdx*mdx+mdy*mdy);
-      if(md<MOUSE_DIST){p.vx+=mdx/md*MOUSE_PULL;p.vy+=mdy/md*MOUSE_PULL;p.pulled=true;}
-      else if(p.pulled){const rx=p.hx-p.x,ry=p.hy-p.y,rd=Math.sqrt(rx*rx+ry*ry);if(rd>1){p.vx+=rx/rd*0.06;p.vy+=ry/rd*0.06;}else{p.pulled=false;}}
-      else{const spd=Math.sqrt(p.vx*p.vx+p.vy*p.vy);if(spd<BASE_SPEED*0.5){p.vx+=(Math.random()-.5)*0.05;p.vy+=(Math.random()-.5)*0.05;}p.hx=p.x;p.hy=p.y;}
-      p.vx*=0.97;p.vy*=0.97;
-      const spd=Math.sqrt(p.vx*p.vx+p.vy*p.vy),maxSpd=p.pulled?1.5:BASE_SPEED;
-      if(spd>maxSpd){p.vx=p.vx/spd*maxSpd;p.vy=p.vy/spd*maxSpd;}
+      const spd=Math.sqrt(p.vx*p.vx+p.vy*p.vy);
+      if(spd<BASE_SPEED*0.5){p.vx+=(Math.random()-.5)*0.05;p.vy+=(Math.random()-.5)*0.05;}
+      if(spd>BASE_SPEED){p.vx=p.vx/spd*BASE_SPEED;p.vy=p.vy/spd*BASE_SPEED;}
       p.x+=p.vx;p.y+=p.vy;
       if(p.x<0){p.x=0;p.vx*=-1;}if(p.x>W){p.x=W;p.vx*=-1;}
       if(p.y<0){p.y=0;p.vy*=-1;}if(p.y>H){p.y=H;p.vy*=-1;}
+
       const g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*3.5);
       g.addColorStop(0,`rgba(${DOT_COLOR},0.85)`);g.addColorStop(1,`rgba(${DOT_COLOR},0)`);
       ctx.beginPath();ctx.arc(p.x,p.y,p.r*3.5,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();
