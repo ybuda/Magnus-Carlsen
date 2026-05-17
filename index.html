@@ -6,9 +6,9 @@
 <title>YTech</title>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-<link rel="icon" type="image/x-icon" href="favsion.ico?v=2"/>
-<link rel="shortcut icon" type="image/x-icon" href="favsion.ico?v=2"/>
-<link rel="apple-touch-icon" href="favsion.ico?v=2"/>
+<link rel="icon" type="image/x-icon" href="favsion.ico?v=3"/>
+<link rel="shortcut icon" type="image/x-icon" href="favsion.ico?v=3"/>
+<link rel="apple-touch-icon" href="favsion.ico?v=3"/>
 <style>
 :root{
   --blue:#007bff;--cyan:#00d4ff;--bg:#07111f;--bg2:#0d1e2e;--bg3:#0a1828;
@@ -20,7 +20,6 @@
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body,body *{cursor:none!important}
 body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direction:rtl;overflow-x:hidden}
 ::-webkit-scrollbar{width:5px}
 ::-webkit-scrollbar-track{background:var(--bg)}
@@ -28,7 +27,6 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 
 /* CANVAS */
 #bgCanvas{position:fixed;inset:0;z-index:0;pointer-events:none}
-#cursorCanvas{position:fixed;inset:0;z-index:9999;pointer-events:none}
 
 /* NAV */
 nav{position:fixed;top:0;right:0;left:0;z-index:900;padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between;background:rgba(15,23,42,.82);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid var(--border)}
@@ -329,7 +327,6 @@ body.light .form-success{background:linear-gradient(135deg,rgba(0,100,255,.06),r
 <body>
 
 <canvas id="bgCanvas"></canvas>
-<canvas id="cursorCanvas"></canvas>
 
 <!-- NAV -->
 <nav>
@@ -691,117 +688,6 @@ body.light .form-success{background:linear-gradient(135deg,rgba(0,100,255,.06),r
   draw();
 })();
 
-
-/* ── MAGIC WAND CURSOR ── */
-(function(){
-  const C=document.getElementById('cursorCanvas');
-  const ctx=C.getContext('2d');
-  let W,H,mx=-200,my=-200,particles=[];
-
-  function resize(){W=C.width=innerWidth;H=C.height=innerHeight}
-  resize();window.addEventListener('resize',resize);
-  window.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;spawnParticles(e.clientX,e.clientY)});
-  window.addEventListener('mouseleave',()=>{mx=-200;my=-200});
-
-  const COLORS=['#00d4ff','#ffffff','#7dd3fc','#a78bfa','#fde68a','#86efac'];
-
-  function spawnParticles(x,y){
-    const count=3+Math.floor(Math.random()*3);
-    for(let i=0;i<count;i++){
-      const angle=Math.random()*Math.PI*2;
-      const speed=0.4+Math.random()*1.8;
-      particles.push({
-        x:x+(Math.random()-0.5)*8,
-        y:y+(Math.random()-0.5)*8,
-        vx:Math.cos(angle)*speed,
-        vy:Math.sin(angle)*speed-1,
-        life:1,
-        decay:0.018+Math.random()*0.025,
-        size:1.5+Math.random()*3.5,
-        color:COLORS[Math.floor(Math.random()*COLORS.length)],
-        star:Math.random()>0.5
-      });
-    }
-  }
-
-  function drawStar(x,y,r,color,alpha){
-    ctx.save();
-    ctx.globalAlpha=alpha;
-    ctx.fillStyle=color;
-    ctx.shadowColor=color;
-    ctx.shadowBlur=6;
-    ctx.beginPath();
-    for(let i=0;i<5;i++){
-      const a=((i*4-1)/10)*Math.PI*2;
-      const b=a+Math.PI/5;
-      if(i===0)ctx.moveTo(x+r*Math.cos(a),y+r*Math.sin(a));
-      else ctx.lineTo(x+r*Math.cos(a),y+r*Math.sin(a));
-      ctx.lineTo(x+(r*0.4)*Math.cos(b),y+(r*0.4)*Math.sin(b));
-    }
-    ctx.closePath();ctx.fill();
-    ctx.restore();
-  }
-
-  function drawWand(x,y){
-    ctx.save();
-    ctx.translate(x,y);
-    ctx.rotate(-Math.PI/4);
-
-    // wand stick
-    const grad=ctx.createLinearGradient(-2,-22,2,2);
-    grad.addColorStop(0,'#c084fc');
-    grad.addColorStop(0.5,'#818cf8');
-    grad.addColorStop(1,'#4f46e5');
-    ctx.beginPath();
-    ctx.roundRect(-2,-22,4,28,2);
-    ctx.fillStyle=grad;
-    ctx.shadowColor='#a78bfa';
-    ctx.shadowBlur=8;
-    ctx.fill();
-
-    // wand tip star
-    drawStar(0,-24,6,'#fde68a',1);
-
-    // tip glow
-    const glow=ctx.createRadialGradient(0,-24,0,0,-24,10);
-    glow.addColorStop(0,'rgba(253,230,138,0.5)');
-    glow.addColorStop(1,'rgba(253,230,138,0)');
-    ctx.beginPath();ctx.arc(0,-24,10,0,Math.PI*2);
-    ctx.fillStyle=glow;ctx.shadowBlur=0;
-    ctx.fill();
-
-    ctx.restore();
-  }
-
-  function draw(){
-    ctx.clearRect(0,0,W,H);
-
-    // update & draw particles
-    particles=particles.filter(p=>p.life>0);
-    for(const p of particles){
-      p.x+=p.vx;p.y+=p.vy;
-      p.vy+=0.04; // gravity
-      p.vx*=0.98;
-      p.life-=p.decay;
-      const a=Math.max(0,p.life);
-      if(p.star){
-        drawStar(p.x,p.y,p.size,p.color,a);
-      } else {
-        ctx.save();
-        ctx.globalAlpha=a;
-        ctx.beginPath();ctx.arc(p.x,p.y,p.size*0.6,0,Math.PI*2);
-        ctx.fillStyle=p.color;
-        ctx.shadowColor=p.color;ctx.shadowBlur=8;
-        ctx.fill();ctx.restore();
-      }
-    }
-
-    // draw wand
-    if(mx>-100)drawWand(mx,my);
-    requestAnimationFrame(draw);
-  }
-  draw();
-})();
 
 /* ── NAV ── */
 const hamburger=document.getElementById('hamburger'),navLinks=document.getElementById('navLinks');
